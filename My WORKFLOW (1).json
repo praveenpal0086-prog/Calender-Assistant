@@ -1,0 +1,169 @@
+{
+  "name": "My WORKFLOW",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 6
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0dab4172-5a77-4065-b0e2-f3429db9d001",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Look at my events/meetings for the day and send me a nicely formatted HTML email to Praveenpal0086@gmail.com on the top two most important events of the day and tell me why. Look at the event title, description, attendees to find this out.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        -32
+      ],
+      "id": "22b09808-39bd-4975-b3ca-522270b0b4ce",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        96,
+        208
+      ],
+      "id": "94f81193-3e60-4aa0-a1c0-0ed501938ad5",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "f0meRG7TQuwsQDkU",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        208
+      ],
+      "id": "cae80f19-4024-4421-a05f-d9f3a25b7ab2",
+      "name": "Send a message in Gmail",
+      "webhookId": "567fa41e-3143-41f8-9297-dae48a62ed94",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "msZ9MdCRDi8xjb2q",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "praveenpal0086@gmail.com",
+          "mode": "list",
+          "cachedResultName": "praveenpal0086@gmail.com"
+        },
+        "timeMax": "={{ $now.plus({ day: 1 }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        624,
+        208
+      ],
+      "id": "1c913ffd-862f-4ea7-8057-cd2600ad8e8e",
+      "name": "Get many events in Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "6mtCDzj6lPhCCOZj",
+          "name": "Google Calendar account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many events in Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "516ae998-9d3e-41cb-b19e-cf5651c66b2a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c619cb5a449705fd3239817d4de05a68325efceb927b5be2b6e98c6e96f61716"
+  },
+  "nodeGroups": [],
+  "id": "ntGh7FlFBFPEGZoG",
+  "tags": []
+}
